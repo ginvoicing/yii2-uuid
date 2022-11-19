@@ -1,0 +1,74 @@
+{
+    "name": "ginvoicing/yii2-uuid",
+    "description": "This extension allows yii2 to create uuid using ramsey uuid library.",
+    "keywords": ["yii2", "uuid", "api", "php8.1"],
+    "type": "yii2-extension",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/ginvoicing/yii2-uuid/issues",
+        "source": "https://github.com/ginvoicing/yii2-uuid"
+    },
+    "authors": [
+        {
+            "name": "Tarun Jangra",
+            "email": "tarun.jangra@hotmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "ext-json": "*",
+        "ext-ctype": "*",
+        "ext-gmp": "*",
+        "ext-bcmath": "*",
+        "yiisoft/yii2": "^2.0.47",
+        "ramsey/uuid": "^4.6"
+    },
+    "require-dev": {
+        "codeception/codeception": "^4.0",
+        "codeception/verify": "^1.1.0",
+        "codeception/specify": "^0.4.6",
+        "codeception/module-filesystem": "^1.0.0",
+        "codeception/module-yii2": "^1.0.0",
+        "codeception/module-asserts": "^1.0.0",
+        "phpro/grumphp": "^1.0.0",
+        "yiisoft/yii2-coding-standards": "~2.0.0",
+        "codeception/assert-throws": "^1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "yii\\Uuid\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "yii\\Uuid\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "build": "codecept build",
+        "test": "codecept run",
+        "post-install-cmd": [
+            "([ $COMPOSER_DEV_MODE -eq 0 ] || vendor/bin/phpcs --config-set installed_paths ../../yiisoft/yii2-coding-standards/)"
+        ],
+        "post-update-cmd": [
+            "([ $COMPOSER_DEV_MODE -eq 0 ] || vendor/bin/phpcs --config-set installed_paths ../../yiisoft/yii2-coding-standards/)"
+        ]
+    },
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true,
+            "phpro/grumphp": true
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.x-dev"
+        }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ]
+}
