@@ -20,8 +20,8 @@
         "ext-ctype": "*",
         "ext-gmp": "*",
         "ext-bcmath": "*",
-        "yiisoft/yii2": "^2.0.47",
-        "ramsey/uuid": "^4.6"
+        "yiisoft/yii2": "~2.0.45",
+        "ramsey/uuid": "^4.6.0"
     },
     "require-dev": {
         "codeception/codeception": "^4.0",
