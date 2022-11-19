@@ -26,7 +26,7 @@ jobs:
               with:
                   php-version: ${{ matrix.php }}
                   tools: pecl
-                  extensions: apc, curl, dom, imagick, intl, mbstring, mcrypt, ctype, gmp, bcmath, memcached, mysql, pdo, pdo_mysql, pdo_pgsql, pdo_sqlite, pgsql, sqlite
+                  extensions: curl, dom, imagick, intl, mbstring, mcrypt, ctype, gmp, bcmath, memcached, mysql, pdo, pdo_mysql, pdo_pgsql, pdo_sqlite, pgsql, sqlite
                   ini-values: date.timezone='UTC', session.save_path="${{ runner.temp }}"
             - name: Install Memcached
               uses: niden/actions-memcached@v7
@@ -42,5 +42,5 @@ jobs:
             - name: Install dependencies
               run: composer update $DEFAULT_COMPOSER_FLAGS
             - name: PHP Unit tests
-              run: make test
+              run: vendor/bin/codecept build && vendor/bin/codecept run --verbose
 
