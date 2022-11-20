@@ -4,7 +4,7 @@ namespace yii\Uuid\behaviors;
 
 use Ramsey\Uuid\Provider\Node\StaticNodeProvider;
 use Ramsey\Uuid\Type\Hexadecimal;
-use Ramsey\Uuid\Type\Integer;
+use Ramsey\Uuid\Type\Integer as IntegerObject;
 use yii\behaviors\AttributeBehavior;
 use yii\db\BaseActiveRecord;
 use Ramsey\Uuid\Uuid;
@@ -31,12 +31,23 @@ use Ramsey\Uuid\Uuid;
 
 class V2 extends AttributeBehavior
 {
-    public string $defaultAttribute = 'id';
-
-    public int|null $node = null;
+    /**
+     * @var string the attribute that will receive uuid value
+     * Set this property to other primary key attribute name.
+     */
+    public string $primaryKeyAttribute = 'id';
+    /**
+     * {@inheritdoc}
+     *
+     * In case, when the value is `null`, the result UUID [uuid2()](https://uuid.ramsey.dev/en/stable/rfc4122/version2.html)
+     * will be used as value.
+     */
+    public $value;
     public int|null $clockSeq = null;
-    public int|null $localIdentifier = null;
     public bool $binary = false;
+
+    private StaticNodeProvider $_nodeProvider;
+    private IntegerObject $_localIdentifier;
 
 
     /**
@@ -44,11 +55,23 @@ class V2 extends AttributeBehavior
      */
     public function init()
     {
-        if (!$this->attributes) {
+        parent::init();
+
+        if (empty($this->attributes)) {
             $this->attributes = [
-                BaseActiveRecord::EVENT_BEFORE_INSERT => [$this->defaultAttribute]
+                BaseActiveRecord::EVENT_BEFORE_INSERT => [$this->primaryKeyAttribute]
             ];
         }
+    }
+
+    public function setNode(int|null $node)
+    {
+        $this->_nodeProvider = $node ? new StaticNodeProvider(new Hexadecimal($node)) : null;
+    }
+
+    public function setLocalIdentifier(int $localIdentifier)
+    {
+        $this->_localIdentifier = new IntegerObject($localIdentifier);
     }
 
     /**
@@ -56,26 +79,16 @@ class V2 extends AttributeBehavior
      */
     protected function getValue($event)
     {
-
-        $nodeProvider = null;
-        $localIdentifier = null;
-
-        if ($this->node) {
-            $nodeProvider = new StaticNodeProvider(new Hexadecimal($this->node));
+        if ($this->value === null) {
+            $uuid = Uuid::uuid2(
+                Uuid::DCE_DOMAIN_ORG,
+                $this->_localIdentifier,
+                $this->_nodeProvider?->getNode(),
+                $this->clockSeq
+            );
+            return $this->binary ? $uuid->getBytes() : $uuid->toString();
         }
 
-        if ($this->localIdentifier) {
-            $localIdentifier = new Integer($this->localIdentifier);
-        }
-
-        $uuid = Uuid::uuid2(
-            Uuid::DCE_DOMAIN_ORG,
-            $localIdentifier,
-            $nodeProvider?->getNode(),
-            $this->clockSeq
-        );
-
-        $this->value = $this->binary ? $uuid->getBytes() : $uuid->toString();
-        return $this->value;
+        return parent::getValue($event);
     }
 }

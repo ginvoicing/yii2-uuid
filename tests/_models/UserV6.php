@@ -20,7 +20,7 @@ class UserV6 extends ActiveRecord
         return [
             [
                 'class' => V6::class,
-                'defaultAttribute' => 'uuid',
+                'primaryKeyAttribute' => 'uuid',
                 'node'=> 121212121213, // optional
                 'clockSeq' => 16484, // optional
                 'binary' => true // optional

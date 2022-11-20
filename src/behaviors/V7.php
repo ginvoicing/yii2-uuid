@@ -26,23 +26,30 @@ use Ramsey\Uuid\Uuid;
  */
 class V7 extends AttributeBehavior
 {
-    public string $defaultAttribute = 'id';
+    public string $primaryKeyAttribute = 'id';
 
-    public \DateTime|null $dateTime = null;
     public int|null $clockSeq = null;
     public bool $binary = false;
 
+    private \DateTime|null $_dateTime = null;
 
     /**
      * @inheritdoc
      */
     public function init()
     {
-        if (!$this->attributes) {
+        parent::init();
+
+        if (empty($this->attributes)) {
             $this->attributes = [
-                BaseActiveRecord::EVENT_BEFORE_INSERT => [$this->defaultAttribute]
+                BaseActiveRecord::EVENT_BEFORE_INSERT => [$this->primaryKeyAttribute]
             ];
         }
+    }
+
+    public function setDateTime(\DateTime $dateTime)
+    {
+        $this->_dateTime = $dateTime;
     }
 
     /**
@@ -50,8 +57,10 @@ class V7 extends AttributeBehavior
      */
     protected function getValue($event)
     {
-        $uuid = Uuid::uuid7($this?->dateTime);
-        $this->value = $this->binary ? $uuid->getBytes() : $uuid->toString();
-        return $this->value;
+        if ($this->value === null) {
+            $uuid = Uuid::uuid7($this?->_dateTime);
+            return $this->binary ? $uuid->getBytes() : $uuid->toString();
+        }
+        return parent::getValue($event);
     }
 }

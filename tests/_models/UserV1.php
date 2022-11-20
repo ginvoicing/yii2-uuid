@@ -19,7 +19,7 @@ class UserV1 extends ActiveRecord
         return [
             [
                 'class' => V1::class,
-                'defaultAttribute' => 'uuid',
+                'primaryKeyAttribute' => 'uuid',
                 'binary' => true
             ]
         ];

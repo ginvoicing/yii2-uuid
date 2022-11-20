@@ -31,11 +31,24 @@ use Ramsey\Uuid\Uuid;
  */
 class V6 extends AttributeBehavior
 {
-    public string $defaultAttribute = 'id';
+    /**
+     * @var string the attribute that will receive uuid value
+     * Set this property to other primary key attribute name.
+     */
+    public string $primaryKeyAttribute = 'id';
+    /**
+     * {@inheritdoc}
+     *
+     * In case, when the value is `null`, the result UUID [uuid1()](https://uuid.ramsey.dev/en/stable/rfc4122/version1.html)
+     * will be used as value.
+     */
+    public $value;
 
-    public int|null $node = null;
+
     public int|null $clockSeq = null;
     public bool $binary = false;
+
+    private StaticNodeProvider|null $_nodeProvider = null;
 
 
     /**
@@ -43,11 +56,18 @@ class V6 extends AttributeBehavior
      */
     public function init()
     {
-        if (!$this->attributes) {
+        parent::init();
+
+        if (empty($this->attributes)) {
             $this->attributes = [
-                BaseActiveRecord::EVENT_BEFORE_INSERT => [$this->defaultAttribute]
+                BaseActiveRecord::EVENT_BEFORE_INSERT => [$this->primaryKeyAttribute]
             ];
         }
+    }
+
+    public function setNode(int|null $node)
+    {
+        $this->_nodeProvider = $node ? new StaticNodeProvider(new Hexadecimal($node)) : null;
     }
 
     /**
@@ -55,14 +75,11 @@ class V6 extends AttributeBehavior
      */
     protected function getValue($event)
     {
-
-        $nodeProvider = null;
-
-        if ($this->node) {
-            $nodeProvider = new StaticNodeProvider(new Hexadecimal($this->node));
+        if ($this->value === null) {
+            $uuid = Uuid::uuid6($this->_nodeProvider?->getNode(), $this->clockSeq);
+            return $this->binary ? $uuid->getBytes() : $uuid->toString();
         }
-        $uuid = Uuid::uuid6($nodeProvider?->getNode(), $this->clockSeq);
-        $this->value = $this->binary ? $uuid->getBytes() : $uuid->toString();
-        return $this->value;
+
+        return parent::getValue($event);
     }
 }

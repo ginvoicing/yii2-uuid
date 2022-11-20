@@ -19,7 +19,7 @@ class UserV7 extends ActiveRecord
         return [
             [
                 'class' => V7::class,
-                'defaultAttribute' => 'uuid',
+                'primaryKeyAttribute' => 'uuid',
                 'dateTime' => new \DateTime(),
                 'binary' => true
             ]
