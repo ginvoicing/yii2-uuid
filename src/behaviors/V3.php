@@ -5,17 +5,19 @@ namespace yii\Uuid\behaviors;
 use yii\behaviors\AttributeBehavior;
 use yii\db\BaseActiveRecord;
 use Ramsey\Uuid\Uuid;
+use yii\Uuid\enums\V3Namespace;
 
 /**
  * ```php
- * use yii\Uuid\behaviors\V7;
+ * use yii\Uuid\behaviors\V3;
  *
  * public function behaviors()
  * {
  *     return [
  *         [
  *             '__class' => V1::class,
- *             'dateTime' => new DateTimeImmutable('@281474976710.655'),
+ *             'namespace' => V3Namespace::NAMESPACE_URL,
+ *             'name' => 'https://www.example.com/'
  *         ],
  *     ];
  * }
@@ -24,7 +26,7 @@ use Ramsey\Uuid\Uuid;
  * @author Tarun Jangra <tarun.jangra@hotmail.com>
  * @since 1.0
  */
-class V7 extends AttributeBehavior
+class V3 extends AttributeBehavior
 {
     /**
      * @var string the attribute that will receive uuid value
@@ -34,15 +36,15 @@ class V7 extends AttributeBehavior
     /**
      * {@inheritdoc}
      *
-     * In case, when the value is `null`, the result UUID [uuid1()](https://uuid.ramsey.dev/en/stable/rfc4122/version1.html)
+     * In case, when the value is `null`, the result UUID [uuid3()](https://uuid.ramsey.dev/en/stable/rfc4122/version3.html)
      * will be used as value.
      */
     public $value;
 
-    public int|null $clockSeq = null;
     public bool $binary = false;
+    public string $name = 'https://ginvoicing.com';
 
-    private \DateTime|null $_dateTime = null;
+    private string|null $_namespace = V3Namespace::NAMESPACE_URL;
 
     /**
      * @inheritdoc
@@ -58,9 +60,9 @@ class V7 extends AttributeBehavior
         }
     }
 
-    public function setDateTime(\DateTime $dateTime)
+    public function setNamespace(string $ns)
     {
-        $this->_dateTime = $dateTime;
+        $this->_namespace = $ns;
     }
 
     /**
@@ -69,7 +71,7 @@ class V7 extends AttributeBehavior
     protected function getValue($event)
     {
         if ($this->value === null) {
-            $uuid = Uuid::uuid7($this?->_dateTime);
+            $uuid = Uuid::uuid3($this->_namespace, $this->name);
             return $this->binary ? $uuid->getBytes() : $uuid->toString();
         }
         return parent::getValue($event);

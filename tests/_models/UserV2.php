@@ -8,6 +8,8 @@ use yii\Uuid\behaviors\V2;
 use yii\Uuid\enums\V2Domain;
 use yii\Uuid\UuidValidator;
 
+/** @var string $uuid; */
+
 class UserV2 extends ActiveRecord
 {
 

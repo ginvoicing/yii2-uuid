@@ -8,6 +8,7 @@ use Yii;
 use yii\db\Schema;
 use yii\Uuid\Tests\_models\UserV1;
 use yii\Uuid\Tests\_models\UserV2;
+use yii\Uuid\Tests\_models\UserV3;
 use yii\Uuid\Tests\_models\UserV6;
 use yii\Uuid\Tests\_models\UserV7;
 use yii\Uuid\UuidHelper;
@@ -44,7 +45,9 @@ class UuidTest extends \Codeception\Test\Unit
             $user = UserV1::findOne($model->uuid);
         }
 
-        $this->assertTrue(Uuid::isValid(UuidHelper::bin2uuid($user?->uuid)));
+        $uuidObject = UuidHelper::objectFromBin($user?->uuid);
+        $this->assertTrue(UuidHelper::isValid($uuidObject));
+        $this->assertTrue($user->uuid === $uuidObject->getBytes());
     }
 
     public function testV1InvalidUuid()
@@ -62,17 +65,38 @@ class UuidTest extends \Codeception\Test\Unit
         $model->name = "Tarun Jangra";
         $user = null;
         if ($model->save()) {
-            $user = UserV1::findOne($model->uuid);
+            $user = UserV2::findOne($model->uuid);
         }
-        /** @var UuidV2 $uuidObject */
         $uuidObject = UuidHelper::objectFromBin($user?->uuid);
-        $this->assertTrue(Uuid::isValid($uuidObject));
-//        $this->assertTrue($uuidObject->getLocalDomainName() === 'group');
+        $this->assertTrue(UuidHelper::isValid($uuidObject));
+        $this->assertTrue($user->uuid === $uuidObject->getBytes());
     }
 
     public function testV2InvalidUuid()
     {
         $model = new UserV2();
+        $model->uuid = '322.3k3k3k3j';
+        $model->name = "Tarun Jangra";
+        $model->save();
+        $this->assertTrue($model->getFirstError('uuid') === 'Uuid is not valid UUID.');
+    }
+
+    public function testV3Uuid()
+    {
+        $model = new UserV3();
+        $model->name = "Tarun Jangra";
+        $user = null;
+        if ($model->save()) {
+            $user = UserV3::findOne($model->uuid);
+        }
+        $uuidObject = UuidHelper::objectFromBin($user?->uuid);
+        $this->assertTrue(UuidHelper::isValid($uuidObject));
+        $this->assertTrue($user->uuid === $uuidObject->getBytes());
+    }
+
+    public function testV3InvalidUuid()
+    {
+        $model = new UserV3();
         $model->uuid = '322.3k3k3k3j';
         $model->name = "Tarun Jangra";
         $model->save();
@@ -85,10 +109,12 @@ class UuidTest extends \Codeception\Test\Unit
         $model->name = "Tarun Jangra";
         $user = null;
         if ($model->save()) {
-            $user = UserV1::findOne($model->uuid);
+            $user = UserV6::findOne($model->uuid);
         }
 
-        $this->assertTrue(Uuid::isValid(UuidHelper::bin2uuid($user?->uuid)));
+        $uuidObject = UuidHelper::objectFromBin($user?->uuid);
+        $this->assertTrue(UuidHelper::isValid($uuidObject));
+        $this->assertTrue($user->uuid === $uuidObject->getBytes());
     }
 
     public function testV6InvalidUuid()
@@ -100,6 +126,7 @@ class UuidTest extends \Codeception\Test\Unit
         $this->assertTrue($model->getFirstError('uuid') === 'Wrong uuid.');
     }
 
+
     public function testV7Uuid()
     {
         $model = new UserV7();
@@ -109,7 +136,9 @@ class UuidTest extends \Codeception\Test\Unit
             $user = UserV7::findOne($model->uuid);
         }
 
-        $this->assertTrue(Uuid::isValid(UuidHelper::bin2uuid($user?->uuid)));
+        $uuidObject = UuidHelper::objectFromBin($user?->uuid);
+        $this->assertTrue(UuidHelper::isValid($uuidObject));
+        $this->assertTrue($user->uuid === $uuidObject->getBytes());
     }
 
     public function testV7InvalidUuid()

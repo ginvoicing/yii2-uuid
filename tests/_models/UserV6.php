@@ -7,6 +7,8 @@ use yii\Uuid\behaviors\V1;
 use yii\Uuid\behaviors\V6;
 use yii\Uuid\UuidValidator;
 
+/** @var string $uuid; */
+
 class UserV6 extends ActiveRecord
 {
 

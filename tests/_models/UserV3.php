@@ -3,12 +3,12 @@
 namespace yii\Uuid\Tests\_models;
 
 use yii\db\ActiveRecord;
-use yii\Uuid\behaviors\V1;
+use yii\Uuid\behaviors\V3;
 use yii\Uuid\UuidValidator;
 
 /** @var string $uuid; */
 
-class UserV1 extends ActiveRecord
+class UserV3 extends ActiveRecord
 {
 
     public static function tableName()
@@ -20,13 +20,12 @@ class UserV1 extends ActiveRecord
     {
         return [
             [
-                'class' => V1::class,
+                'class' => V3::class,
                 'primaryKeyAttribute' => 'uuid',
                 'binary' => true
             ]
         ];
     }
-
     public function rules()
     {
         return [

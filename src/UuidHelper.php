@@ -52,6 +52,11 @@ class UuidHelper
         return self::objectFromBin($uuid)->toString();
     }
 
+    public static function isValid(mixed $uuid): bool
+    {
+        return Uuid::isValid($uuid);
+    }
+
     public static function objectFromString(string $uuid): UuidInterface
     {
         return Uuid::fromString($uuid);
