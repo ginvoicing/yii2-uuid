@@ -8,6 +8,7 @@ use Ramsey\Uuid\Type\Integer as IntegerObject;
 use yii\behaviors\AttributeBehavior;
 use yii\db\BaseActiveRecord;
 use Ramsey\Uuid\Uuid;
+use yii\Uuid\enums\V2Domain;
 
 /**
  * ```php
@@ -19,7 +20,8 @@ use Ramsey\Uuid\Uuid;
  *         [
  *             '__class' => V1::class,
  *             'node' => 121212121212,
- *             'clockSeq' => 12233
+ *             'clockSeq' => 12233,
+ *             'domain' => V2Domain::DCE_DOMAIN_PERSON
  *         ],
  *     ];
  * }
@@ -28,9 +30,9 @@ use Ramsey\Uuid\Uuid;
  * @author Tarun Jangra <tarun.jangra@hotmail.com>
  * @since 1.0
  */
-
 class V2 extends AttributeBehavior
 {
+
     /**
      * @var string the attribute that will receive uuid value
      * Set this property to other primary key attribute name.
@@ -46,8 +48,9 @@ class V2 extends AttributeBehavior
     public int|null $clockSeq = null;
     public bool $binary = false;
 
-    private StaticNodeProvider $_nodeProvider;
-    private IntegerObject $_localIdentifier;
+    private V2Domain $_domain = V2Domain::DCE_DOMAIN_ORG;
+    private StaticNodeProvider|null $_nodeProvider = null;
+    private IntegerObject|null $_localIdentifier = null;
 
 
     /**
@@ -74,6 +77,11 @@ class V2 extends AttributeBehavior
         $this->_localIdentifier = new IntegerObject($localIdentifier);
     }
 
+    public function setDomain(V2Domain $domain)
+    {
+        $this->_domain = $domain;
+    }
+
     /**
      * @inheritDoc
      */
@@ -81,7 +89,7 @@ class V2 extends AttributeBehavior
     {
         if ($this->value === null) {
             $uuid = Uuid::uuid2(
-                Uuid::DCE_DOMAIN_ORG,
+                $this->_domain->value,
                 $this->_localIdentifier,
                 $this->_nodeProvider?->getNode(),
                 $this->clockSeq

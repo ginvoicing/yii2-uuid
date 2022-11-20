@@ -2,10 +2,12 @@
 
 namespace yii\Uuid\Tests\unit;
 
+use Ramsey\Uuid\Rfc4122\UuidV2;
 use Ramsey\Uuid\Uuid;
 use Yii;
 use yii\db\Schema;
 use yii\Uuid\Tests\_models\UserV1;
+use yii\Uuid\Tests\_models\UserV2;
 use yii\Uuid\Tests\_models\UserV6;
 use yii\Uuid\Tests\_models\UserV7;
 use yii\Uuid\UuidHelper;
@@ -48,6 +50,29 @@ class UuidTest extends \Codeception\Test\Unit
     public function testV1InvalidUuid()
     {
         $model = new UserV1();
+        $model->uuid = '322.3k3k3k3j';
+        $model->name = "Tarun Jangra";
+        $model->save();
+        $this->assertTrue($model->getFirstError('uuid') === 'Uuid is not valid UUID.');
+    }
+
+    public function testV2UuidAndDomainGroup()
+    {
+        $model = new UserV2();
+        $model->name = "Tarun Jangra";
+        $user = null;
+        if ($model->save()) {
+            $user = UserV1::findOne($model->uuid);
+        }
+        /** @var UuidV2 $uuidObject */
+        $uuidObject = UuidHelper::objectFromBin($user?->uuid);
+        $this->assertTrue(Uuid::isValid($uuidObject));
+//        $this->assertTrue($uuidObject->getLocalDomainName() === 'group');
+    }
+
+    public function testV2InvalidUuid()
+    {
+        $model = new UserV2();
         $model->uuid = '322.3k3k3k3j';
         $model->name = "Tarun Jangra";
         $model->save();

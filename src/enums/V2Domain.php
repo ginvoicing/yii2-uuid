@@ -31,34 +31,15 @@
  *
  * Created by PhpStorm.
  * User: tarunjangra
- * Date: 18/11/22
- * Time: 10:48 pm
+ * Date: 20/11/22
+ * Time: 1:20 pm
  */
 
-namespace yii\Uuid;
+namespace yii\Uuid\enums;
 
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
-
-class UuidHelper
+enum V2Domain: int
 {
-    public static function uuid2bin(string $uuid): string
-    {
-        return self::objectFromString($uuid)->getBytes();
-    }
-
-    public static function bin2uuid(mixed $uuid): string
-    {
-        return self::objectFromBin($uuid)->toString();
-    }
-
-    public static function objectFromString(string $uuid): UuidInterface
-    {
-        return Uuid::fromString($uuid);
-    }
-
-    public static function objectFromBin(mixed $uuid): UuidInterface
-    {
-        return Uuid::fromBytes($uuid);
-    }
+    case DCE_DOMAIN_PERSON = 0;
+    case DCE_DOMAIN_GROUP = 1;
+    case DCE_DOMAIN_ORG = 2;
 }
