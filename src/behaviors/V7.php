@@ -15,7 +15,7 @@ use Ramsey\Uuid\Uuid;
  *     return [
  *         [
  *             'class' => V7::class,
- *             'dateTime' => new DateTimeImmutable('@281474976710.655'),
+ *             'dateTime' => new DateTime(),
  *         ],
  *     ];
  * }
