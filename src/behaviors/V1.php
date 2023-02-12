@@ -18,7 +18,7 @@ use Ramsey\Uuid\Uuid;
  * {
  *     return [
  *         [
- *             '__class' => V1::class,
+ *             'class' => V1::class,
  *             'node' => 121212121212,
  *             'clockSeq' => 12233
  *         ],

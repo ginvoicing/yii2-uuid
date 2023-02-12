@@ -15,7 +15,7 @@ use yii\Uuid\enums\V3Namespace;
  * {
  *     return [
  *         [
- *             '__class' => V1::class,
+ *             'class' => V3::class,
  *             'namespace' => V3Namespace::NAMESPACE_URL,
  *             'name' => 'https://www.example.com/'
  *         ],

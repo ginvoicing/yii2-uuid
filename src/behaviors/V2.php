@@ -18,7 +18,7 @@ use yii\Uuid\enums\V2Domain;
  * {
  *     return [
  *         [
- *             '__class' => V1::class,
+ *             'class' => v2::class,
  *             'node' => 121212121212,
  *             'clockSeq' => 12233,
  *             'domain' => V2Domain::DCE_DOMAIN_PERSON
